@@ -1,25 +1,27 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 import 'package:super15/screens/Dashboard/Rules.dart';
 import 'package:super15/screens/widgets/back_container.dart';
 import 'package:super15/services/Prefs.dart';
+
 import 'package:super15/services/User.dart';
 import 'package:super15/values/UiColors.dart';
 import 'package:provider/provider.dart';
 
 class Dashboard extends StatefulWidget {
-  const Dashboard({Key? key}) : super(key: key);
-
+  const Dashboard({Key? key, required this.userId, this.data})
+      : super(key: key);
+  final userId;
+  final data;
   @override
   _DashboardState createState() => _DashboardState();
 }
 
 class _DashboardState extends State<Dashboard> {
-  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   late Query<Map<String, dynamic>> userData;
   late User user;
   String? uId;
@@ -27,13 +29,15 @@ class _DashboardState extends State<Dashboard> {
   @override
   void initState() {
     super.initState();
+    setUserId();
   }
 
-  bool isLoading = true;
+  Future setUserId() async => Prefs.setUserId(widget.userId);
 
+  bool isLoading = true;
   @override
   Widget build(BuildContext context) {
-    final data = Provider.of<UserData>(context);
+    final data = widget.data ?? Provider.of<UserData>(context);
     return SafeArea(
       child: Scaffold(
           appBar: AppBar(
@@ -92,7 +96,9 @@ class _DashboardState extends State<Dashboard> {
                       style: TextStyle(
                           fontSize: 14.sp, fontWeight: FontWeight.w500)),
                   TextSpan(
-                      text: capitalize(data.name.toString()),
+                      text: capitalize(data.name.toString()) == "Null"
+                          ? "Loading..."
+                          : capitalize(data.name.toString()),
                       style: TextStyle(
                           fontSize: 14.sp, fontWeight: FontWeight.w600)),
                 ])),
@@ -193,7 +199,10 @@ class _DashboardState extends State<Dashboard> {
                           fontWeight: FontWeight.w600, fontSize: 12.sp),
                     ),
                     Text(
-                      data.email == "" ? "No email address found" : data.email,
+                      data.email.toString() == "Null" ||
+                              data.email.toString() == ""
+                          ? "No email address found"
+                          : data.email.toString(),
                       style: GoogleFonts.nunito(fontSize: 12.sp),
                     )
                   ],

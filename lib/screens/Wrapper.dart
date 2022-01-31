@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:super15/screens/Dashboard/Dashboard.dart';
 import 'package:super15/screens/Login/SignUpPage.dart';
-import 'package:super15/services/Auth.dart';
 import 'package:super15/services/Prefs.dart';
 import 'package:super15/services/User.dart';
 
@@ -39,7 +38,11 @@ class _WrapperState extends State<Wrapper> {
         : StreamProvider<UserData>.value(
             value: User(userData["userId"]).userInfo,
             initialData: new UserData(),
-            child: userData["isLoggedIn"] ? SignupPage() : Dashboard(),
+            child: userData["isLoggedIn"]
+                ? SignupPage()
+                : Dashboard(
+                    userId: userData["userId"],
+                  ),
           );
   }
 }

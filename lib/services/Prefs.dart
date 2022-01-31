@@ -22,4 +22,9 @@ class Prefs {
     final SharedPreferences prefs = await _prefs;
     prefs.setBool("isLoggedIn", false);
   }
+
+  static Future setUserId(userId) async {
+    final SharedPreferences prefs = await _prefs;
+    prefs.setBool("userId", userId);
+  }
 }

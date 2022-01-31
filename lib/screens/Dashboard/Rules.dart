@@ -14,37 +14,47 @@ class Rules extends StatefulWidget {
 class _RulesState extends State<Rules> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: SafeArea(
-      child: SingleChildScrollView(
-        child: backContainer(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [_header(), _body(), const Spacer(), _footer()],
+    return SafeArea(
+      child: Scaffold(
+          appBar: AppBar(
+            flexibleSpace: _header(),
+            backgroundColor: Colors.white,
+            toolbarHeight: 7.h,
+            elevation: 0.0,
+            automaticallyImplyLeading: false,
           ),
-        ),
-      ),
-    ));
+          body: SingleChildScrollView(
+            child: backContainer(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [_body(), Spacer(), _footer()],
+              ),
+            ),
+          )),
+    );
   }
 
   Widget _header() {
-    return Container(
-      child: Row(
-        children: [
-          const Icon(Icons.arrow_back_ios),
-          const SizedBox(
-            width: 30,
-          ),
-          Text(
-            "Super15 Rules",
-            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13.sp),
-          ),
-          const Spacer(),
-          Icon(
-            Icons.more_vert,
-            size: 20.sp,
-          )
-        ],
+    return Center(
+      child: Container(
+        padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
+        child: Row(
+          children: [
+            const Icon(Icons.arrow_back_ios),
+            const SizedBox(
+              width: 30,
+            ),
+            Text(
+              "Super15 Rules",
+              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13.sp),
+            ),
+            const Spacer(),
+            Icon(
+              Icons.more_vert,
+              size: 20.sp,
+            )
+          ],
+        ),
       ),
     );
   }
@@ -177,7 +187,7 @@ class _RulesState extends State<Rules> {
   Widget _footer() {
     return Container(
       width: 100.w,
-      margin: EdgeInsets.only(bottom: 30),
+      margin: EdgeInsets.only(bottom: 100.sp),
       padding: EdgeInsets.symmetric(vertical: 15),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10), color: UiColors.primary),

@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 import 'package:super15/screens/Dashboard/Dashboard.dart';
@@ -37,6 +38,7 @@ class _SignupPageState extends State<SignupPage> {
 
   @override
   Widget build(BuildContext context) {
+    final data = Provider.of<UserData>(context);
     return Scaffold(
         body: SafeArea(
       child: SingleChildScrollView(
@@ -97,7 +99,10 @@ class _SignupPageState extends State<SignupPage> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => const Dashboard()));
+                                    builder: (context) => Dashboard(
+                                          data: data,
+                                          userId: newUser.user!.uid,
+                                        )));
                           });
                         });
                       }
