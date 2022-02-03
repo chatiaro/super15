@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 import 'package:super15/screens/Dashboard/Rules.dart';
+import 'package:super15/screens/DemoQuiz/QuizModel.dart';
 import 'package:super15/screens/widgets/back_container.dart';
 import 'package:super15/services/Prefs.dart';
 
@@ -146,17 +147,27 @@ class _DashboardState extends State<Dashboard> {
           const SizedBox(
             height: 15,
           ),
-          Container(
-            height: 85,
-            margin: EdgeInsets.symmetric(horizontal: 30),
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: UiColors.primary),
-            child: Center(
-                child: Text(
-              "PLAY DEMO",
-              style: TextStyle(fontSize: 12.sp, color: Colors.white),
-            )),
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => Rules(
+                            uId: widget.userId,
+                          )));
+            },
+            child: Container(
+              height: 85,
+              margin: EdgeInsets.symmetric(horizontal: 30),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  color: UiColors.primary),
+              child: Center(
+                  child: Text(
+                "PLAY DEMO",
+                style: TextStyle(fontSize: 12.sp, color: Colors.white),
+              )),
+            ),
           )
         ],
       ),
@@ -268,8 +279,12 @@ class _DashboardState extends State<Dashboard> {
               ),
               GestureDetector(
                 onTap: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => const Rules()));
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => Rules(
+                                uId: widget.userId,
+                              )));
                 },
                 child: Text(
                   "READ HERE",

@@ -24,7 +24,8 @@ class ValidateRegistration {
           "password": password,
           "phone": mobile,
           "userId": userId,
-          "profilePhoto": "none"
+          "profilePhoto": "none",
+          "points": 0
         }).then((value) async {
           await Prefs.setLoginInfo(userId);
         });

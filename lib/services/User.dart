@@ -3,11 +3,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class User {
-  User(this.uid) {
-    userData = FirebaseFirestore.instance
-        .collection('users')
-        .where("userId", isEqualTo: uid);    
-  }
+  User(this.uid);
   final uid;
   late Query<Map<String, dynamic>> userData;
   UserData getUserData(QuerySnapshot<Map<String, dynamic>> snapshot) {
@@ -21,14 +17,38 @@ class User {
   }
 
   Stream<UserData> get userInfo {
+    userData = FirebaseFirestore.instance
+        .collection('users')
+        .where("userId", isEqualTo: uid);
     return userData.snapshots().map(getUserData);
+  }
+
+  List<UserData> getUserList(QuerySnapshot<Map<String, dynamic>> snapshot) {
+    return snapshot.docs.map((doc) {
+      return UserData(
+          name: (doc.data()["name"]),
+          email: (doc.data()["email"]),
+          phone: (doc.data()["phone"]),
+          points: (doc.data()["points"]),
+          profilePhoto: (doc.data()["profilePhoto"]));
+    }).toList();
+  }
+
+  Stream<List<UserData>> get userList {
+    userData = FirebaseFirestore.instance
+        .collection('users')
+        .orderBy('points', descending: true);
+
+    return userData.snapshots().map(getUserList);
   }
 }
 
 class UserData {
-  const UserData({this.name, this.email, this.phone, this.profilePhoto});
+  const UserData(
+      {this.name, this.email, this.phone, this.profilePhoto, this.points = 0});
   final name;
   final email;
   final phone;
   final profilePhoto;
+  final points;
 }

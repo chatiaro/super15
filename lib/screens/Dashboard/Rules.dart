@@ -1,36 +1,57 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
+import 'package:super15/models/demo_quiz_model.dart';
+import 'package:super15/screens/DemoQuiz/QuizModel.dart';
 import 'package:super15/screens/widgets/back_container.dart';
+import 'package:super15/services/Database.dart';
+import 'package:super15/services/User.dart';
 import 'package:super15/values/UiColors.dart';
 
 class Rules extends StatefulWidget {
-  const Rules({Key? key}) : super(key: key);
+  const Rules({Key? key, required this.uId}) : super(key: key);
+  final uId;
 
   @override
   _RulesState createState() => _RulesState();
 }
 
 class _RulesState extends State<Rules> {
+  List<DemoQuiz> dummyData = List.empty(growable: true);
+  List<UserData> dummyData2 = List.empty(growable: true);
+  @override
+  void initState() {
+    super.initState();
+    dummyData2
+        .add(new UserData(name: "", email: "", phone: "", profilePhoto: ""));
+    dummyData.add(new DemoQuiz(
+        correctAns: 0,
+        date: "00-00-00",
+        options: ["none", "none", "none", "none"],
+        question: "Loading.."));
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-          appBar: AppBar(
-            flexibleSpace: _header(),
-            backgroundColor: Colors.white,
-            toolbarHeight: 7.h,
-            elevation: 0.0,
-            automaticallyImplyLeading: false,
-          ),
-          body: SingleChildScrollView(
-            child: backContainer(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [_body(), Spacer(), _footer()],
-              ),
+        appBar: AppBar(
+          flexibleSpace: _header(),
+          backgroundColor: Colors.white,
+          toolbarHeight: 7.h,
+          elevation: 0.0,
+          automaticallyImplyLeading: false,
+        ),
+        body: SingleChildScrollView(
+          child: backContainer(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [_body(), Spacer(), _footer()],
             ),
-          )),
+          ),
+        ),
+      ),
     );
   }
 
@@ -185,19 +206,40 @@ class _RulesState extends State<Rules> {
   }
 
   Widget _footer() {
-    return Container(
-      width: 100.w,
-      margin: EdgeInsets.only(bottom: 100.sp),
-      padding: EdgeInsets.symmetric(vertical: 15),
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10), color: UiColors.primary),
-      child: Center(
-        child: Text(
-          "Get Started",
-          style: TextStyle(
-              fontWeight: FontWeight.w600,
-              fontSize: 12.sp,
-              color: Colors.white),
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (BuildContext context) => MultiProvider(
+              providers: [
+                StreamProvider<List<DemoQuiz>>.value(
+                  value: Database().questions,
+                  initialData: dummyData.toList(),
+                ),
+                StreamProvider<List<UserData>>.value(
+                  value: User(widget.uId).userList,
+                  initialData: dummyData2,
+                ),
+              ],
+              child: QuizModel(),
+            ),
+          ),
+        );
+      },
+      child: Container(
+        width: 100.w,
+        margin: EdgeInsets.only(bottom: 100.sp),
+        padding: EdgeInsets.symmetric(vertical: 15),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10), color: UiColors.primary),
+        child: Center(
+          child: Text(
+            "Get Started",
+            style: TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 12.sp,
+                color: Colors.white),
+          ),
         ),
       ),
     );
