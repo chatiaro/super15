@@ -12,6 +12,7 @@ class User {
             name: (snapshot.docs[0]["name"]),
             email: (snapshot.docs[0]["email"]),
             phone: (snapshot.docs[0]["phone"]),
+            points: (snapshot.docs[0]["points"]),
             profilePhoto: (snapshot.docs[0]["profilePhoto"]))
         : null!;
   }
@@ -41,14 +42,28 @@ class User {
 
     return userData.snapshots().map(getUserList);
   }
+
+  Future<void> addPoint(int val) async {
+    CollectionReference userData =
+        FirebaseFirestore.instance.collection('users');
+        
+
+    await userData.doc(uid).update({"points": val});
+  }
 }
 
 class UserData {
   const UserData(
-      {this.name, this.email, this.phone, this.profilePhoto, this.points = 0});
+      {this.name,
+      this.email,
+      this.phone,
+      this.profilePhoto,
+      this.points,
+      this.uId});
   final name;
   final email;
   final phone;
   final profilePhoto;
   final points;
+  final uId;
 }

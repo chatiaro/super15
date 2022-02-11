@@ -10,7 +10,8 @@ class ValidateRegistration {
       email,
       password,
       mobile,
-      userId}) async {
+      userId,
+      points = 0}) async {
     String action = 'create';
     if (documentSnapshot != null) {
       action = 'update';
@@ -36,7 +37,8 @@ class ValidateRegistration {
           "name": name,
           "email": email,
           "password": password,
-          "phone": mobile
+          "phone": mobile,
+          "points": points
         }).then((value) async {});
       }
     }

@@ -220,6 +220,10 @@ class _RulesState extends State<Rules> {
                   value: User(widget.uId).userList,
                   initialData: dummyData2,
                 ),
+                StreamProvider<UserData>.value(
+                  value: User(widget.uId).userInfo,
+                  initialData: new UserData(),
+                ),
               ],
               child: QuizModel(),
             ),

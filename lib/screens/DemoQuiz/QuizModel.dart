@@ -8,6 +8,7 @@ import 'package:super15/screens/Dashboard/Dashboard.dart';
 import 'package:super15/screens/widgets/back_container.dart';
 import 'package:super15/services/Database.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:super15/services/Prefs.dart';
 import 'package:super15/services/User.dart';
 
 class QuizModel extends StatefulWidget {
@@ -18,15 +19,25 @@ class QuizModel extends StatefulWidget {
   _QuizModelState createState() => _QuizModelState();
 }
 
+late Map<String, dynamic> userData;
+
 class _QuizModelState extends State<QuizModel> {
   List<String> isCompleted = List.empty(growable: true);
   int normalQuizLength = 15;
+
+  Future getUserId() async {
+    await Prefs.getUserData().then((value) {
+      userData = {"userId": value["userId"], "isLoggedIn": value["isLoggedIn"]};
+    });
+  }
+
   @override
   void initState() {
+    super.initState();
+    getUserId();
     for (int i = 0; i < normalQuizLength + 1; i++) {
       isCompleted.add(i == 0 ? "progress" : "pending");
     }
-    super.initState();
   }
 
   PageController _controller = new PageController();
@@ -34,6 +45,7 @@ class _QuizModelState extends State<QuizModel> {
   Widget build(BuildContext context) {
     final quizData = Provider.of<List<DemoQuiz>>(context);
     final userData = Provider.of<List<UserData>>(context);
+    final currUserData = Provider.of<UserData>(context);
 
     return SafeArea(
         child: Scaffold(
@@ -76,7 +88,7 @@ class _QuizModelState extends State<QuizModel> {
                       child: PageView.builder(
                           onPageChanged: (page) {
                             setState(() {
-                              isCompleted[page -  1] = "completed";
+                              isCompleted[page - 1] = "completed";
                             });
                           },
                           controller: _controller,
@@ -122,21 +134,27 @@ class _QuizModelState extends State<QuizModel> {
                                     height: 20,
                                   ),
                                   Row(children: [
-                                    _optionContainer(quizData[index].options[0],
-                                        quizData[0].correctAns, 1),
+                                    _optionContainer(
+                                        quizData[index].options[0],
+                                        quizData[0].correctAns,
+                                        1,
+                                        currUserData),
                                     Spacer(),
                                     _optionContainer(quizData[index].options[1],
-                                        quizData[0].correctAns, 2)
+                                        quizData[0].correctAns, 2, currUserData)
                                   ]),
                                   SizedBox(
                                     height: 20,
                                   ),
                                   Row(children: [
-                                    _optionContainer(quizData[index].options[2],
-                                        quizData[0].correctAns, 3),
+                                    _optionContainer(
+                                        quizData[index].options[2],
+                                        quizData[0].correctAns,
+                                        3,
+                                        currUserData),
                                     Spacer(),
                                     _optionContainer(quizData[index].options[3],
-                                        quizData[0].correctAns, 4)
+                                        quizData[0].correctAns, 4, currUserData)
                                   ])
                                 ],
                               ),
@@ -239,13 +257,14 @@ class _QuizModelState extends State<QuizModel> {
   ];
   Color wrong = Color(0XFFFF6967);
   Color right = Color(0XFF16FF72);
-  Widget _optionContainer(text, correct, key) {
+  Widget _optionContainer(text, correct, key, currUserData) {
     return GestureDetector(
       onTap: () async {
         if (correct == key) {
           setState(() {
             bgColors[key - 1] = Color(0XFF16FF72);
           });
+          await User(userData["userId"]).addPoint(currUserData.points + 10);
         } else {
           setState(() {
             bgColors[key - 1] = Color(0XFFFF6967);
