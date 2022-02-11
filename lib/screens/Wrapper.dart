@@ -35,9 +35,25 @@ class _WrapperState extends State<Wrapper> {
   Widget build(BuildContext context) {
     return isLoading
         ? Container()
-        : StreamProvider<UserData>.value(
-            value: User(userData["userId"]).userInfo,
-            initialData: new UserData(),
+        : MultiProvider(
+            providers: [
+              StreamProvider<UserData>.value(
+                value: User(userData["userId"]).userInfo,
+                initialData: new UserData(),
+              ),
+              StreamProvider<List<UserData>>.value(
+                value: User(userData["userId"]).userList,
+                initialData: [
+                  new UserData(
+                      email: "Loading..",
+                      name: "Loading..",
+                      phone: "+91xxxxxxxxxx",
+                      points: "0",
+                      profilePhoto: "none",
+                      uId: "0")
+                ],
+              ),
+            ],
             child: userData["isLoggedIn"]
                 ? SignupPage()
                 : Dashboard(

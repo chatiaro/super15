@@ -45,9 +45,7 @@ class User {
 
   Future<void> addPoint(int val) async {
     CollectionReference userData =
-        FirebaseFirestore.instance.collection('users');
-        
-
+        FirebaseFirestore.instance.collection('users');        
     await userData.doc(uid).update({"points": val});
   }
 }

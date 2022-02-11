@@ -12,19 +12,19 @@ class Prefs {
     final SharedPreferences prefs = await _prefs;
     return {
       "userId": await prefs.getString("userId"),
-      "isLoggedIn": await prefs.getString("isLoggedIn") == null
+      "isLoggedIn": await prefs.getBool("isLoggedIn") == null
           ? false
-          : prefs.getString("isLoggedIn")
+          : prefs.getBool("isLoggedIn")
     };
   }
 
   static Future toggleIsLoggedIn() async {
     final SharedPreferences prefs = await _prefs;
-    prefs.setBool("isLoggedIn", false);
+    prefs.setBool("isLoggedIn", !(await prefs.getBool("isLoggedIn") ?? true));
   }
 
   static Future setUserId(userId) async {
     final SharedPreferences prefs = await _prefs;
-    prefs.setBool("userId", userId);
+    prefs.setString("userId", userId);
   }
-}
+}        

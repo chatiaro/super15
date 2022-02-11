@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:super15/services/Prefs.dart';
 import 'User.dart' as account;
 
 class Auth {
@@ -7,12 +8,17 @@ class Auth {
     return user != null ? new account.User(user.user!.uid) : null!;
   }
 
-  static Future<account.User> _loginEmailAndPass(email, password) async {
+  static Future loginEmailAndPass(email, password) async {
     try {
       UserCredential user = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
-      return _getUser(user);
+      await Prefs.setUserId(user.user!.uid);
     } catch (e) {}
     return null!;
+  }
+
+  static Future signOut() async {
+    FirebaseAuth.instance.signOut();
+    await Prefs.toggleIsLoggedIn();
   }
 }

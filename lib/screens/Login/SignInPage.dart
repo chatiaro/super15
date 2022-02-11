@@ -15,8 +15,12 @@ import 'package:super15/screens/Login/widgets/action_button.dart';
 import 'package:super15/screens/Login/widgets/inputComponent.dart';
 import 'package:super15/screens/widgets/back_container.dart';
 import 'package:super15/screens/widgets/footer_text.dart';
+import 'package:super15/services/Auth.dart';
+import 'package:super15/services/Prefs.dart';
 import 'package:super15/values/UiColors.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+
+import '../Wrapper.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({Key? key}) : super(key: key);
@@ -37,7 +41,6 @@ class _SignInPageState extends State<SignInPage> {
     super.initState();
   }
 
-  
   bool isLogging = false;
   @override
   Widget build(BuildContext context) {
@@ -105,7 +108,35 @@ class _SignInPageState extends State<SignInPage> {
                         : actionButton(
                             text: "LOGIN",
                             onClick: () async {
-                              
+                              try {
+                                setState(() {
+                                  isLogging = true;
+                                });
+                                var user = await FirebaseAuth.instance
+                                    .signInWithEmailAndPassword(
+                                        email: _emailController.text,
+                                        password: _passwordController.text);
+                                if (user != null) {
+                                  setState(() {
+                                    isLogging = false;
+                                  });
+                                  await Prefs.toggleIsLoggedIn();
+                                  await Prefs.setUserId(user.user!.uid);
+                                  Navigator.of(context).pushAndRemoveUntil(
+                                      MaterialPageRoute(
+                                          builder: (context) => Wrapper()),
+                                      (Route<dynamic> route) => false);
+                                } else {
+                                  setState(() {
+                                    isLogging = false;
+                                  });
+                                }
+                              } catch (e) {
+                                setState(() {
+                                  isLogging = false;
+                                });
+                                Fluttertoast.showToast(msg: e.toString());
+                              }
                             }),
                     const SizedBox(
                       height: 45,

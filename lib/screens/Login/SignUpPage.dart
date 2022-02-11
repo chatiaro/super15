@@ -12,8 +12,10 @@ import 'package:super15/screens/Login/SignInPage.dart';
 import 'package:super15/screens/Login/api/validate_registration.dart';
 import 'package:super15/screens/Login/widgets/inputComponent.dart';
 import 'package:super15/screens/Login/widgets/action_button.dart';
+import 'package:super15/screens/Wrapper.dart';
 import 'package:super15/screens/widgets/back_container.dart';
 import 'package:super15/screens/widgets/footer_text.dart';
+import 'package:super15/services/Prefs.dart';
 import 'package:super15/services/User.dart';
 import 'package:super15/values/UiColors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -38,7 +40,6 @@ class _SignupPageState extends State<SignupPage> {
 
   @override
   Widget build(BuildContext context) {
-    final data = Provider.of<UserData>(context);
     return Scaffold(
         body: SafeArea(
       child: SingleChildScrollView(
@@ -94,15 +95,14 @@ class _SignupPageState extends State<SignupPage> {
                                   email: _emailController.text,
                                   password: _passwordController.text,
                                   userId: newUser.user!.uid)
-                              .then((value) {
+                              .then((value) async {
                             isLoading = false;
-                            Navigator.push(
-                                context,
+                            await Prefs.toggleIsLoggedIn();
+
+                            Navigator.of(context).pushAndRemoveUntil(
                                 MaterialPageRoute(
-                                    builder: (context) => Dashboard(
-                                          data: data,
-                                          userId: newUser.user!.uid,
-                                        )));
+                                    builder: (context) => Wrapper()),
+                                (Route<dynamic> route) => false);
                           });
                         });
                       }
