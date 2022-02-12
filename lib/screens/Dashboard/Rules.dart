@@ -27,7 +27,6 @@ class _RulesState extends State<Rules> {
         .add(new UserData(name: "", email: "", phone: "", profilePhoto: ""));
     dummyData.add(new DemoQuiz(
         correctAns: 0,
-        date: "00-00-00",
         options: ["none", "none", "none", "none"],
         question: "Loading.."));
   }
@@ -61,19 +60,20 @@ class _RulesState extends State<Rules> {
         padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
         child: Row(
           children: [
-            const Icon(Icons.arrow_back_ios),
-            const SizedBox(
-              width: 30,
+            GestureDetector(
+                onTap: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Icon(Icons.arrow_back_ios)),
+            SizedBox(
+              width: 25.w,
             ),
-            Text(
-              "Super15 Rules",
-              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13.sp),
+            Center(
+              child: Text(
+                "Super15 Rules",
+                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13.sp),
+              ),
             ),
-            const Spacer(),
-            Icon(
-              Icons.more_vert,
-              size: 20.sp,
-            )
           ],
         ),
       ),

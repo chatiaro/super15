@@ -24,8 +24,8 @@ class _EditProfileState extends State<EditProfile> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          toolbarHeight: 2.h,
+          backgroundColor: Colors.white,
+          toolbarHeight: 5.h,
           elevation: 0.0,
           flexibleSpace: _header(),
         ),
@@ -55,18 +55,24 @@ class _EditProfileState extends State<EditProfile> {
         padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
         child: Row(
           children: [
-            Icon(Icons.arrow_back_ios_new),
+            GestureDetector(
+                onTap: () {
+                  Navigator.of(context).pop();
+                },
+                child: Icon(Icons.arrow_back_ios_new)),
             Spacer(),
-            Icon(Icons.close)
+            GestureDetector(
+                onTap: () {
+                  Navigator.of(context).pop();
+                },
+                child: Icon(Icons.close))
           ],
         ));
   }
 
   Widget _profileHolder() {
     return GestureDetector(
-      onTap: (){
-        
-      },
+      onTap: () {},
       child: Center(
           child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -77,7 +83,8 @@ class _EditProfileState extends State<EditProfile> {
             height: 140.sp,
             width: 140.sp,
             decoration: BoxDecoration(
-                color: Colors.black12, borderRadius: BorderRadius.circular(100)),
+                color: Colors.black12,
+                borderRadius: BorderRadius.circular(100)),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(62),
               child: userData.profilePhoto == "none"

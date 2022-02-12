@@ -8,8 +8,7 @@ class Database {
   List<DemoQuiz> getquestionData(QuerySnapshot<Map<String, dynamic>> snapshot) {
     return snapshot.docs.map((doc) {
       return DemoQuiz(
-          correctAns: (doc.data()["correct_ans"]),
-          date: (doc.data()["date"]),
+          correctAns: (doc.data()["correct_ans"]),          
           options: List.from((doc.data()["options"])),
           question: (doc.data()["question"]));
     }).toList();

@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import 'package:super15/models/demo_quiz_model.dart';
 import 'package:super15/screens/Dashboard/Dashboard.dart';
+import 'package:super15/screens/DemoQuiz/QuizResult.dart';
 import 'package:super15/screens/widgets/back_container.dart';
 import 'package:super15/services/Database.dart';
 import 'package:auto_size_text/auto_size_text.dart';
@@ -19,7 +20,7 @@ class QuizModel extends StatefulWidget {
   _QuizModelState createState() => _QuizModelState();
 }
 
-late Map<String, dynamic> userData;
+late Map<String, dynamic> prefDetails;
 
 class _QuizModelState extends State<QuizModel> {
   List<String> isCompleted = List.empty(growable: true);
@@ -27,7 +28,10 @@ class _QuizModelState extends State<QuizModel> {
 
   Future getUserId() async {
     await Prefs.getUserData().then((value) {
-      userData = {"userId": value["userId"], "isLoggedIn": value["isLoggedIn"]};
+      prefDetails = {
+        "userId": value["userId"],
+        "isLoggedIn": value["isLoggedIn"]
+      };
     });
   }
 
@@ -86,79 +90,133 @@ class _QuizModelState extends State<QuizModel> {
                     Expanded(
                       flex: 2,
                       child: PageView.builder(
-                          onPageChanged: (page) {
-                            setState(() {
-                              isCompleted[page - 1] = "completed";
-                            });
+                          //physics: NeverScrollableScrollPhysics(),
+                          onPageChanged: (page) async {
+                            if (page == quizData.length) {
+                              await Future.delayed(Duration(microseconds: 1))
+                                  .then((value) {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (BuildContext context) =>
+                                        MultiProvider(
+                                          providers: [
+                                            StreamProvider<UserData>.value(
+                                              value: User(prefDetails["userId"])
+                                                  .userInfo,
+                                              initialData: new UserData(),
+                                            ),
+                                            StreamProvider<
+                                                List<UserData>>.value(
+                                              value: User(prefDetails["userId"])
+                                                  .userList,
+                                              initialData: [
+                                                new UserData(
+                                                    email: "Loading..",
+                                                    name: "Loading..",
+                                                    phone: "+91xxxxxxxxxx",
+                                                    points: "0",
+                                                    profilePhoto: "none",
+                                                    uId: "0")
+                                              ],
+                                            ),
+                                          ],
+                                          child: QuizResult(),
+                                        )));
+                              });
+                            } else {
+                              setState(() {
+                                isCompleted[page - 1] = "completed";
+                              });
+                            }
                           },
                           controller: _controller,
-                          itemCount: quizData.length,
+                          itemCount: quizData.length + 1,
                           itemBuilder: (BuildContext context, int index) {
-                            return Container(
-                              padding: EdgeInsets.symmetric(horizontal: 20),
-                              child: Column(
-                                children: [
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  Container(
-                                    width: 100.w,
-                                    height: 120.sp,
-                                    color: Colors.black12,
-                                    child: Center(
-                                        child: Text(
-                                      quizData[index].question,
-                                      style: GoogleFonts.montserrat(
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 15.sp,
-                                      ),
-                                    )),
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Center(
-                                      child: Text(
-                                    "Choose your answer and submit",
+                            return index == quizData.length
+                                ? Center(
+                                    child: Text(
+                                    "Thank You!",
                                     style: GoogleFonts.montserrat(
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 15.sp,
+                                        fontSize: 20.sp,
+                                        fontWeight: FontWeight.bold),
+                                  ))
+                                : Container(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 20),
+                                    child: Column(
+                                      children: [
+                                        SizedBox(
+                                          height: 20,
+                                        ),
+                                        Container(
+                                          width: 100.w,
+                                          height: 120.sp,
+                                          padding: EdgeInsets.all(20),
+                                          decoration: BoxDecoration(
+                                              color: Colors.black12,
+                                              borderRadius:
+                                                  BorderRadius.circular(15)),
+                                          child: Container(
+                                            child: Center(
+                                                child: AutoSizeText(
+                                              quizData[index].question,
+                                              style: GoogleFonts.montserrat(
+                                                fontWeight: FontWeight.w500,
+                                                fontSize: 15.sp,
+                                              ),
+                                            )),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: 10,
+                                        ),
+                                        Center(
+                                            child: Text(
+                                          "Choose your answer and submit",
+                                          style: GoogleFonts.montserrat(
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 15.sp,
+                                          ),
+                                        )),
+                                        Container(
+                                          margin: EdgeInsets.only(top: 10),
+                                          height: 2,
+                                          color: Colors.black12,
+                                        ),
+                                        SizedBox(
+                                          height: 20,
+                                        ),
+                                        Row(children: [
+                                          _optionContainer(
+                                              quizData[index].options[0],
+                                              quizData[index].correctAns,
+                                              1,
+                                              currUserData),
+                                          Spacer(),
+                                          _optionContainer(
+                                              quizData[index].options[1],
+                                              quizData[index].correctAns,
+                                              2,
+                                              currUserData)
+                                        ]),
+                                        SizedBox(
+                                          height: 20,
+                                        ),
+                                        Row(children: [
+                                          _optionContainer(
+                                              quizData[index].options[2],
+                                              quizData[index].correctAns,
+                                              3,
+                                              currUserData),
+                                          Spacer(),
+                                          _optionContainer(
+                                              quizData[index].options[3],
+                                              quizData[index].correctAns,
+                                              4,
+                                              currUserData)
+                                        ])
+                                      ],
                                     ),
-                                  )),
-                                  Container(
-                                    margin: EdgeInsets.only(top: 10),
-                                    height: 2,
-                                    color: Colors.black12,
-                                  ),
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  Row(children: [
-                                    _optionContainer(
-                                        quizData[index].options[0],
-                                        quizData[0].correctAns,
-                                        1,
-                                        currUserData),
-                                    Spacer(),
-                                    _optionContainer(quizData[index].options[1],
-                                        quizData[0].correctAns, 2, currUserData)
-                                  ]),
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  Row(children: [
-                                    _optionContainer(
-                                        quizData[index].options[2],
-                                        quizData[0].correctAns,
-                                        3,
-                                        currUserData),
-                                    Spacer(),
-                                    _optionContainer(quizData[index].options[3],
-                                        quizData[0].correctAns, 4, currUserData)
-                                  ])
-                                ],
-                              ),
-                            );
+                                  );
                           }),
                     ),
                     Expanded(
@@ -264,7 +322,7 @@ class _QuizModelState extends State<QuizModel> {
           setState(() {
             bgColors[key - 1] = Color(0XFF16FF72);
           });
-          await User(userData["userId"]).addPoint(currUserData.points + 10);
+          await User(prefDetails["userId"]).addPoint(currUserData.points + 10);
         } else {
           setState(() {
             bgColors[key - 1] = Color(0XFFFF6967);

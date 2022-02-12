@@ -237,121 +237,131 @@ class _DashboardState extends State<Dashboard> {
   }
 
   Widget _leaderBoard(userList) {
-    return Expanded(
-        flex: 2,
-        child: Container(
-          margin: EdgeInsets.only(top: 10, left: 20, right: 20),
-          child: Column(
-            children: [
-              Center(
-                  child: Text(
-                "Leaderboard",
-                style: GoogleFonts.montserrat(
-                  fontWeight: FontWeight.w500,
-                  fontSize: 12.sp,
-                ),
-              )),
-              Expanded(
-                  child: ListView.builder(
-                      itemCount: userList.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return Container(
-                            margin: EdgeInsets.fromLTRB(20, 10, 20, 10),
-                            child: Row(
-                              children: [
-                                Container(
-                                  height: 40,
-                                  width: 40,
-                                  decoration: BoxDecoration(
-                                      color: Colors.black12,
-                                      borderRadius: BorderRadius.circular(30)),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(32),
-                                    child:
-                                        userList[index].profilePhoto == "none"
-                                            ? Image.asset(
-                                                "assets/images/profile_pic.png",
-                                                fit: BoxFit.fill,
-                                              )
-                                            : Image.network(
-                                                userList[index]
-                                                    .profilePhoto
-                                                    .toString(),
-                                                fit: BoxFit.fill,
-                                              ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 20,
-                                ),
-                                Text(
-                                  userList[index].name,
-                                  style: GoogleFonts.montserrat(
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 13.sp,
-                                  ),
-                                ),
-                                Spacer(),
-                                Text(
-                                  userList[index].points.toString(),
-                                  style: GoogleFonts.montserrat(
-                                      fontWeight: FontWeight.w400,
-                                      fontSize: 13.sp,
-                                      color: Colors.black54),
-                                )
-                              ],
-                            ));
-                      }))
-            ],
-          ),
-        ));
+    return Container(
+      margin: EdgeInsets.only(top: 10, left: 20, right: 20),
+      child: Column(
+        children: [
+          Center(
+              child: Text(
+            "Leaderboard",
+            style: GoogleFonts.montserrat(
+              fontWeight: FontWeight.w500,
+              fontSize: 12.sp,
+            ),
+          )),
+          Expanded(
+              child: ListView.builder(
+                  itemCount: userList.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Container(
+                        margin: EdgeInsets.fromLTRB(20, 10, 20, 10),
+                        child: Row(
+                          children: [
+                            Container(
+                              height: 40,
+                              width: 40,
+                              decoration: BoxDecoration(
+                                  color: Colors.black12,
+                                  borderRadius: BorderRadius.circular(30)),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(32),
+                                child: userList[index].profilePhoto == "none"
+                                    ? Image.asset(
+                                        "assets/images/profile_pic.png",
+                                        fit: BoxFit.fill,
+                                      )
+                                    : Image.network(
+                                        userList[index].profilePhoto.toString(),
+                                        fit: BoxFit.fill,
+                                      ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 20,
+                            ),
+                            Text(
+                              userList[index].name,
+                              style: GoogleFonts.montserrat(
+                                fontWeight: FontWeight.w500,
+                                fontSize: 13.sp,
+                              ),
+                            ),
+                            Spacer(),
+                            Text(
+                              userList[index].points.toString(),
+                              style: GoogleFonts.montserrat(
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 13.sp,
+                                  color: Colors.black54),
+                            )
+                          ],
+                        ));
+                  }))
+        ],
+      ),
+    );
   }
 
   Widget _footer(data) {
     return Container(
       child: Column(
         children: [
-          Container(
-            padding: EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: <Color>[Color(0XFFD4D4FF), Color(0XFF9999FF)],
-              ),
-            ),
-            height: 85,
-            child: Row(
-              children: [
-                Image.asset(
-                  "assets/images/updateEmail.png",
-                  height: 40,
-                ),
-                const SizedBox(
-                  width: 12,
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(
-                      height: 5,
+          GestureDetector(
+            onTap: () {
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (BuildContext context) => MultiProvider(
+                  providers: [
+                    StreamProvider<UserData>.value(
+                      value: User(widget.userId).userInfo,
+                      initialData: new UserData(),
                     ),
-                    Text(
-                      "Update Email Address",
-                      style: TextStyle(
-                          fontWeight: FontWeight.w600, fontSize: 12.sp),
-                    ),
-                    Text(
-                      data.email.toString() == "Null" ||
-                              data.email.toString() == ""
-                          ? "No email address found"
-                          : data.email.toString(),
-                      style: GoogleFonts.nunito(fontSize: 12.sp),
-                    )
                   ],
-                )
-              ],
+                  child: EditProfile(),
+                ),
+              ));
+            },
+            child: Container(
+              padding: EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: <Color>[Color(0XFFD4D4FF), Color(0XFF9999FF)],
+                ),
+              ),
+              height: 85,
+              child: Row(
+                children: [
+                  Image.asset(
+                    "assets/images/updateEmail.png",
+                    height: 40,
+                  ),
+                  const SizedBox(
+                    width: 12,
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      Text(
+                        "Update Email Address",
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600, fontSize: 12.sp),
+                      ),
+                      Text(
+                        data.email.toString() == "Null" ||
+                                data.email.toString() == ""
+                            ? "No email address found"
+                            : data.email.toString(),
+                        style: GoogleFonts.nunito(fontSize: 12.sp),
+                      )
+                    ],
+                  )
+                ],
+              ),
             ),
           ),
           const SizedBox(
