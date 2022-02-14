@@ -5,9 +5,10 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
+import 'package:super15/screens/Dashboard/AddQuiz.dart';
 import 'package:super15/screens/Dashboard/EditProfile.dart';
 import 'package:super15/screens/Dashboard/Rules.dart';
-import 'package:super15/screens/DemoQuiz/QuizModel.dart';
+
 import 'package:super15/screens/Login/SignUpPage.dart';
 import 'package:super15/screens/widgets/back_container.dart';
 import 'package:super15/services/Auth.dart';
@@ -17,8 +18,6 @@ import 'package:super15/services/RazorPay.dart';
 import 'package:super15/services/User.dart';
 import 'package:super15/values/UiColors.dart';
 import 'package:provider/provider.dart';
-
-import '../Wrapper.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({Key? key, required this.userId, this.data})
@@ -48,23 +47,34 @@ class _DashboardState extends State<Dashboard> {
     final data = widget.data ?? Provider.of<UserData>(context);
     final userList = Provider.of<List<UserData>>(context);
     return SafeArea(
-      child: Scaffold(
-          appBar: AppBar(
-            backgroundColor: Colors.white,
-            toolbarHeight: 10.h,
-            elevation: 0.0,
-            flexibleSpace: _header(data),
-          ),
-          body: backContainer(
-              child: Column(
-            children: [
-              SizedBox(
-                height: 20.sp,
+      child: data.isAdmin == null
+          ? Scaffold(
+              body: Container(
+                color: Colors.white,
+                child: Center(
+                  child: CircularProgressIndicator(
+                    color: UiColors.primary,
+                  ),
+                ),
               ),
-              Expanded(flex: 3, child: _body(data, userList)),
-              Expanded(flex: 2, child: _footer(data))
-            ],
-          ))),
+            )
+          : Scaffold(
+              appBar: AppBar(
+                backgroundColor: Colors.white,
+                toolbarHeight: 10.h,
+                elevation: 0.0,
+                flexibleSpace: _header(data),
+              ),
+              body: backContainer(
+                  child: Column(
+                children: [
+                  SizedBox(
+                    height: 20.sp,
+                  ),
+                  Expanded(flex: 3, child: _body(data, userList)),
+                  Expanded(flex: 2, child: _footer(data))
+                ],
+              ))),
     );
   }
 
@@ -119,45 +129,131 @@ class _DashboardState extends State<Dashboard> {
             const SizedBox(
               width: 20,
             ),
-            PopupMenuButton(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-                  child: Icon(Icons.more_vert),
-                ),
-                itemBuilder: (context) => [
-                      PopupMenuItem(
-                        child: Text("Sign Out"),
-                        value: 1,
-                        onTap: () async {
-                          await Auth.signOut().then((value) {
-                            Navigator.of(context).pushAndRemoveUntil(
-                                MaterialPageRoute(
-                                    builder: (context) => SignupPage()),
-                                (Route<dynamic> route) => false);
-                          });
-                        },
-                      ),
-                      PopupMenuItem(
-                        child: Text("Edit Profile"),
-                        value: 2,
-                        onTap: () async {
-                          await Future.delayed(Duration(microseconds: 1))
-                              .then((value) {
-                            Navigator.of(context).push(MaterialPageRoute(
-                              builder: (BuildContext context) => MultiProvider(
-                                providers: [
-                                  StreamProvider<UserData>.value(
-                                    value: User(widget.userId).userInfo,
-                                    initialData: new UserData(),
+            data.isAdmin ?? false
+                ? PopupMenuButton(
+                    child: Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+                      child: Icon(Icons.more_vert),
+                    ),
+                    itemBuilder: (context) => [
+                          PopupMenuItem(
+                            child: Text("Sign Out"),
+                            value: 1,
+                            onTap: () async {
+                              await Auth.signOut().then((value) {
+                                Navigator.of(context).pushAndRemoveUntil(
+                                    MaterialPageRoute(
+                                        builder: (context) => SignupPage()),
+                                    (Route<dynamic> route) => false);
+                              });
+                            },
+                          ),
+                          PopupMenuItem(
+                            child: Text("Edit Profile"),
+                            value: 2,
+                            onTap: () async {
+                              await Future.delayed(Duration(microseconds: 1))
+                                  .then((value) {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      MultiProvider(
+                                    providers: [
+                                      StreamProvider<UserData>.value(
+                                        value: User(widget.userId).userInfo,
+                                        initialData: new UserData(),
+                                      ),
+                                    ],
+                                    child: EditProfile(),
                                   ),
-                                ],
-                                child: EditProfile(),
-                              ),
-                            ));
-                          });
-                        },
-                      )
-                    ])
+                                ));
+                              });
+                            },
+                          ),
+                          PopupMenuItem(
+                            child: Text("Edit Profile"),
+                            value: 2,
+                            onTap: () async {
+                              await Future.delayed(Duration(microseconds: 1))
+                                  .then((value) {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      MultiProvider(
+                                    providers: [
+                                      StreamProvider<UserData>.value(
+                                        value: User(widget.userId).userInfo,
+                                        initialData: new UserData(),
+                                      ),
+                                    ],
+                                    child: EditProfile(),
+                                  ),
+                                ));
+                              });
+                            },
+                          )
+                        ])
+                : PopupMenuButton(
+                    child: Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 10, vertical: 20),
+                      child: Icon(Icons.more_vert),
+                    ),
+                    itemBuilder: (context) => [
+                          PopupMenuItem(
+                            child: Text("Sign Out"),
+                            value: 1,
+                            onTap: () async {
+                              await Auth.signOut().then((value) {
+                                Navigator.of(context).pushAndRemoveUntil(
+                                    MaterialPageRoute(
+                                        builder: (context) => SignupPage()),
+                                    (Route<dynamic> route) => false);
+                              });
+                            },
+                          ),
+                          PopupMenuItem(
+                            child: Text("Edit Profile"),
+                            value: 2,
+                            onTap: () async {
+                              await Future.delayed(Duration(microseconds: 1))
+                                  .then((value) {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      MultiProvider(
+                                    providers: [
+                                      StreamProvider<UserData>.value(
+                                        value: User(widget.userId).userInfo,
+                                        initialData: new UserData(),
+                                      ),
+                                    ],
+                                    child: EditProfile(),
+                                  ),
+                                ));
+                              });
+                            },
+                          ),
+                          PopupMenuItem(
+                            child: Text("Add Quiz for Tommorow"),
+                            value: 3,
+                            onTap: () async {
+                              await Future.delayed(Duration(microseconds: 1))
+                                  .then((value) {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                      MultiProvider(
+                                    providers: [
+                                      StreamProvider<UserData>.value(
+                                        value: User(widget.userId).userInfo,
+                                        initialData: new UserData(),
+                                      ),
+                                    ],
+                                    child: AddQuiz(),
+                                  ),
+                                ));
+                              });
+                            },
+                          )
+                        ])
           ],
         ),
       ),
@@ -367,44 +463,49 @@ class _DashboardState extends State<Dashboard> {
           const SizedBox(
             height: 15,
           ),
-          Container(
-            padding: EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: <Color>[Color(0XFFD4D4FF), Color(0XFF9999FF)],
+          GestureDetector(
+            onTap: () {
+              Fluttertoast.showToast(msg: "Coming Soon");
+            },
+            child: Container(
+              padding: EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: <Color>[Color(0XFFD4D4FF), Color(0XFF9999FF)],
+                ),
               ),
-            ),
-            height: 85,
-            child: Row(
-              children: [
-                Image.asset(
-                  "assets/images/updatePassword.png",
-                  height: 40,
-                ),
-                const SizedBox(
-                  width: 12,
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      "Change Password",
-                      style: TextStyle(
-                          fontWeight: FontWeight.w600, fontSize: 12.sp),
-                    ),
-                    Text(
-                      "Last changed recently",
-                      style: GoogleFonts.nunito(fontSize: 12.sp),
-                    ),
-                  ],
-                )
-              ],
+              height: 85,
+              child: Row(
+                children: [
+                  Image.asset(
+                    "assets/images/updatePassword.png",
+                    height: 40,
+                  ),
+                  const SizedBox(
+                    width: 12,
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      Text(
+                        "Change Password",
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600, fontSize: 12.sp),
+                      ),
+                      Text(
+                        "Last changed recently",
+                        style: GoogleFonts.nunito(fontSize: 12.sp),
+                      ),
+                    ],
+                  )
+                ],
+              ),
             ),
           ),
           const SizedBox(

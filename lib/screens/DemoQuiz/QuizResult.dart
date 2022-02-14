@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
+import 'package:super15/screens/Dashboard/Dashboard.dart';
 import 'package:super15/screens/Login/widgets/action_button.dart';
+import 'package:super15/screens/Wrapper.dart';
 import 'package:super15/screens/widgets/back_container.dart';
+import 'package:super15/services/Prefs.dart';
 import 'package:super15/services/User.dart';
 import 'package:super15/values/UiColors.dart';
 import 'package:share_plus/share_plus.dart';
@@ -20,6 +23,11 @@ var userData;
 var userList;
 
 class _QuizResultState extends State<QuizResult> {
+  String userId = "";
+  Future getUserId() async {
+    userId = await Prefs.setUserId(userId);
+  }
+
   @override
   Widget build(BuildContext context) {
     userData = Provider.of<UserData>(context);
@@ -154,7 +162,13 @@ class _QuizResultState extends State<QuizResult> {
           children: [
             Icon(Icons.arrow_back_ios_new),
             Spacer(),
-            Icon(Icons.home)
+            GestureDetector(
+                onTap: () {
+                  Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(builder: (context) => Wrapper()),
+                      (route) => false);
+                },
+                child: Icon(Icons.home))
           ],
         ));
   }

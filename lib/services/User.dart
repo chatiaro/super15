@@ -13,6 +13,7 @@ class User {
             email: (snapshot.docs[0]["email"]),
             phone: (snapshot.docs[0]["phone"]),
             points: (snapshot.docs[0]["points"]),
+            isAdmin: (snapshot.docs[0]["is_admin"]),
             uId: (snapshot.docs[0]["userId"]),
             profilePhoto: (snapshot.docs[0]["profilePhoto"]))
         : null!;
@@ -32,6 +33,7 @@ class User {
           email: (doc.data()["email"]),
           phone: (doc.data()["phone"]),
           points: (doc.data()["points"]),
+          isAdmin: (snapshot.docs[0]["is_admin"]),
           uId: (doc.data()["userId"]),
           profilePhoto: (doc.data()["profilePhoto"]));
     }).toList();
@@ -59,11 +61,13 @@ class UserData {
       this.phone,
       this.profilePhoto,
       this.points,
+      this.isAdmin,
       this.uId});
   final name;
   final email;
   final phone;
   final profilePhoto;
   final points;
+  final isAdmin;
   final uId;
 }

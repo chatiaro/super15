@@ -74,7 +74,9 @@ class _SignInPageState extends State<SignInPage> {
                       height: 35,
                     ),
                     inputComponent("Email", controller: _emailController),
-                    inputComponent("Password", controller: _passwordController),
+                    inputComponent("Password",
+                        controller: _passwordController,
+                        obscureText: true),
                     const SizedBox(
                       height: 40,
                     ),

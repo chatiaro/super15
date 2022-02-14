@@ -64,9 +64,9 @@ class _SignupPageState extends State<SignupPage> {
             height: 35,
           ),
           inputComponent("Name", controller: _nameController),
-          inputComponent("Mobile", controller: _mobileController),
+          inputComponent("Mobile", controller: _mobileController ,keyboardType: TextInputType.number),
           inputComponent("Email", controller: _emailController),
-          inputComponent("Password", controller: _passwordController),
+          inputComponent("Password", controller: _passwordController, obscureText: true),
           isLoading
               ? Container(
                   padding: EdgeInsets.symmetric(vertical: 10),

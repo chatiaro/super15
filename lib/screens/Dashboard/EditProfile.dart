@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
-import 'package:super15/screens/DemoQuiz/QuizModel.dart';
 import 'package:super15/screens/Login/widgets/action_button.dart';
 import 'package:super15/screens/Login/widgets/inputComponent.dart';
 import 'package:super15/screens/widgets/back_container.dart';
