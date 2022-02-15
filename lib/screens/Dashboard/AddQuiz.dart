@@ -6,7 +6,6 @@ import 'package:sizer/sizer.dart';
 import 'package:super15/screens/Login/widgets/action_button.dart';
 import 'package:super15/screens/widgets/back_container.dart';
 import 'package:super15/values/UiColors.dart';
-import '../Login/widgets/inputComponent.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class AddQuiz extends StatefulWidget {
@@ -46,11 +45,47 @@ class _AddQuizState extends State<AddQuiz> with TickerProviderStateMixin {
           ),
           body: backContainer(
               child: Column(
-            children: [Expanded(child: Container(width: 200, height: 200, color: ,))],
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _body()
+            ],
           )),
         ),
         date == "null"
-            ? Center(
+            ? _calendar()
+            : Container(),
+      ],
+    ));
+  }
+
+  Widget _header() {
+    return Container(
+      width: 100.w,
+      margin: EdgeInsets.fromLTRB(20, 20, 20, 20),
+      child: Row(
+        children: [
+          GestureDetector(
+              onTap: () {
+                Navigator.of(context).pop();
+              },
+              child: Icon(Icons.arrow_back_ios_new)),
+          SizedBox(
+            width: 30,
+          ),
+          Text(
+            "Question " + quesNo.toString(),
+            style: GoogleFonts.montserrat(
+                fontWeight: FontWeight.w600, fontSize: 13.sp),
+          ),
+          Spacer(),
+          Icon(Icons.more_vert)
+        ],
+      ),
+    );
+  }
+
+  Widget _calendar(){
+    return Center(
                 child: ClipRect(
                     child: BackdropFilter(
                         filter: ImageFilter.blur(
@@ -200,77 +235,72 @@ class _AddQuizState extends State<AddQuiz> with TickerProviderStateMixin {
                                                   })
                                             ]),
                                       ),
-                                    )))))))
-            : Container(),
-      ],
-    ));
-  }
-
-  Widget _header() {
-    return Container(
-      width: 100.w,
-      margin: EdgeInsets.fromLTRB(20, 20, 20, 20),
-      child: Row(
-        children: [
-          GestureDetector(
-              onTap: () {
-                Navigator.of(context).pop();
-              },
-              child: Icon(Icons.arrow_back_ios_new)),
-          SizedBox(
-            width: 30,
-          ),
-          Text(
-            "Question " + quesNo.toString(),
-            style: GoogleFonts.montserrat(
-                fontWeight: FontWeight.w600, fontSize: 13.sp),
-          ),
-          Spacer(),
-          Icon(Icons.more_vert)
-        ],
-      ),
-    );
+                                    )))))));
   }
 
   Widget _body() {
     return Container(
-        width: 100.w,
-        height: 100.h,
-        child: PageView.builder(itemBuilder: (context, index) {
-          return Container(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    _output("Quiz Date", date, half: true),
-                    Spacer(),
-                    _output("Question Number", quesNo.toString(), half: true),
-                  ],
-                ),
-                Container(
-                  margin: EdgeInsets.only(top: 40, bottom: 40),
-                  height: 120.sp,
-                  width: 89.w,
-                  padding: EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.black.withOpacity(0.3))),
-                  child: TextField(
-                    textCapitalization: TextCapitalization.sentences,
-                    controller: new TextEditingController(),
-                    decoration: new InputDecoration.collapsed(
-                        hintText: "Enter Question",
-                        hintStyle: TextStyle(color: Colors.black26)),
-                    keyboardType: TextInputType.multiline,
-                    maxLines: 8,
+          width: 100.w,
+          height: 85.h,                    
+          child: PageView.builder(itemBuilder: (context, index) {
+            return Container(
+              padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                        children: [
+                          _output(
+                            "Quiz Date",
+                            DateFormat("dd-MM-yy").format(_selectedDay!),
+                          ),
+                          Spacer(),
+                          _output("Question No.", quesNo.toString()),
+                        ],
+                      ),
+                
+                  SizedBox(
+                    height: 30,
                   ),
-                ),
-                _optionContainer()
-              ],
-            ),
-          );
-        }));
+                  Text(
+                    "Add Question",
+                    style: GoogleFonts.montserrat(
+                        fontWeight: FontWeight.w600, fontSize: 13.sp),
+                  ),
+                  Container(
+                    margin: EdgeInsets.only(top: 5),
+                    height: 120.sp,
+                    width: 89.w,
+                    padding: EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Colors.black.withOpacity(0.3))),
+                    child: TextField(
+                      textCapitalization: TextCapitalization.sentences,
+                      decoration: new InputDecoration.collapsed(
+                          hintText: "Add Question Here",
+                          hintStyle: TextStyle(color: Colors.black26)),
+                      keyboardType: TextInputType.multiline,
+                      maxLines: 8,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Text(
+                    "Enter options and choose correct \nanswer",
+                    style: GoogleFonts.montserrat(
+                        fontWeight: FontWeight.w600, fontSize: 13.sp),
+                  ),
+                  _optionContainer(1),
+                  _optionContainer(2),
+                  _optionContainer(3),
+                  _optionContainer(4),
+                  ],
+              ),
+            );
+          }),
+    );
   }
 
   Widget _output(title, text, {controller, half = false}) {
@@ -300,31 +330,44 @@ class _AddQuizState extends State<AddQuiz> with TickerProviderStateMixin {
   int _radioValue = 0;
   int where = 0;
 
-  Widget _optionContainer() {
-    return GestureDetector(
-      onTap: () {
-        _handleRadioValueChange(0);
-      },
-      child: Container(
-        width: 90.w,
-        height: 60,
-        margin: EdgeInsets.only(top: 10),
-        padding: EdgeInsets.symmetric(horizontal: 10),
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            color: Colors.transparent,
-            border: Border.all(color: UiColors.primary)),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Center(child: TextField()),
-            Spacer(),
-            new Radio(
-              value: 0,
-              groupValue: _radioValue,
-              onChanged: _handleRadioValueChange,
-            ),
-          ],
+  Widget _optionContainer(int index) {
+    return Container(
+      width: 90.w,
+      height: 60,
+      child: GestureDetector(
+        onTap: () {
+          _handleRadioValueChange(0);
+        },
+        child: Container(
+          width: 90.w,
+          height: 60,
+          margin: EdgeInsets.only(top: 10),
+          padding: EdgeInsets.symmetric(horizontal: 10),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              color: Colors.transparent,
+              border: Border.all(color: UiColors.primary)),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Center(
+                  child: Container(
+                      width: 70.w,
+                      height: 100.h,
+                      child: TextField(
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: 'Option ' + index.toString() ,
+                        ),
+                      ))),
+              Spacer(),
+              new Radio(
+                value: 0,
+                groupValue: _radioValue,
+                onChanged: _handleRadioValueChange,
+              ),
+            ],
+          ),
         ),
       ),
     );
