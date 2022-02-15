@@ -90,7 +90,7 @@ class _QuizModelState extends State<QuizModel> {
                     Expanded(
                       flex: 2,
                       child: PageView.builder(
-                          //physics: NeverScrollableScrollPhysics(),
+                          physics: NeverScrollableScrollPhysics(),
                           onPageChanged: (page) async {
                             if (page == quizData.length) {
                               await Future.delayed(Duration(microseconds: 1))
@@ -328,7 +328,7 @@ class _QuizModelState extends State<QuizModel> {
             bgColors[key - 1] = Color(0XFFFF6967);
           });
         }
-        await Future.delayed(Duration(milliseconds: 500));
+        await Future.delayed(Duration(milliseconds: 300));
         bgColors = [
           Colors.transparent,
           Colors.transparent,

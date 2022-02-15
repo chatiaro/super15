@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -233,7 +234,7 @@ class _DashboardState extends State<Dashboard> {
                             },
                           ),
                           PopupMenuItem(
-                            child: Text("Add Quiz for Tommorow"),
+                            child: Text("Add Quiz"),
                             value: 3,
                             onTap: () async {
                               await Future.delayed(Duration(microseconds: 1))
@@ -277,17 +278,136 @@ class _DashboardState extends State<Dashboard> {
           ),
           GestureDetector(
             onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => RazorPay(
-                          orderId: "orderId",
-                          title: "Super15",
-                          amount: 200,
-                          description: "Participate in paid quiz",
-                          name: data.name,
-                          number: data.phone,
-                          email: data.email)));
+              if (!data.isAdmin) {
+                showModalBottomSheet(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    context: context,
+                    builder: (context) {
+                      return Container(
+                          width: 100.w,
+                          height: 35.h,
+                          padding: EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(15)),
+                          child: Container(
+                            child: SingleChildScrollView(
+                                child: Container(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Center(
+                                    child: Text(
+                                      "You Shall Not Pass!",
+                                      style: GoogleFonts.montserrat(
+                                          fontSize: 16.sp,
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 20,
+                                  ),
+                                  Text(
+                                    "Super15 allows you to participate in a quiz in real time and compete with players online, however in order to play real-time you need to get our pro subscription and put in real money in the game. The winner will eventually be awarded a price from the price-pool.",
+                                    style: GoogleFonts.montserrat(
+                                        fontSize: 10.sp,
+                                        fontWeight: FontWeight.w400),
+                                  ),
+                                  SizedBox(
+                                    height: 20,
+                                  ),
+                                  Text(
+                                    "But worry not! You can play a demo quiz to get a sense of the game before playing it",
+                                    style: GoogleFonts.montserrat(
+                                        fontSize: 10.sp,
+                                        fontWeight: FontWeight.w400),
+                                  ),
+                                  SizedBox(
+                                    height: 20,
+                                  ),
+                                  Row(
+                                    children: [
+                                      GestureDetector(
+                                          onTap: () async {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) => Rules(
+                                                          uId: widget.userId,
+                                                        )));
+                                          },
+                                          child: Container(
+                                            width: 40.w,
+                                            height: 50,
+                                            decoration: BoxDecoration(
+                                                color: Colors.transparent,
+                                                border: Border.all(
+                                                    color: UiColors.primary),
+                                                borderRadius:
+                                                    BorderRadius.circular(10)),
+                                            child: Center(
+                                              child: Text(
+                                                "Play Demo",
+                                                style: TextStyle(
+                                                    fontSize: 12.sp,
+                                                    color: UiColors.primary),
+                                              ),
+                                            ),
+                                          )),
+                                      Spacer(),
+                                      GestureDetector(
+                                          onTap: () async {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) => RazorPay(
+                                                        orderId: "orderId",
+                                                        title: "Super15",
+                                                        amount: 200,
+                                                        description:
+                                                            "Participate in paid quiz",
+                                                        name: data.name,
+                                                        number: data.phone,
+                                                        email: data.email)));
+                                          },
+                                          child: Container(
+                                            width: 40.w,
+                                            height: 50,
+                                            decoration: BoxDecoration(
+                                                color: UiColors.primary,
+                                                borderRadius:
+                                                    BorderRadius.circular(10)),
+                                            child: Center(
+                                              child: AutoSizeText(
+                                                "Subscribe Now!",
+                                                style: TextStyle(
+                                                    fontSize: 12.sp,
+                                                    color: Colors.white),
+                                              ),
+                                            ),
+                                          ))
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            )),
+                          ));
+                    });
+              } else {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => RazorPay(
+                            orderId: "orderId",
+                            title: "Super15",
+                            amount: 200,
+                            description: "Participate in paid quiz",
+                            name: data.name,
+                            number: data.phone,
+                            email: data.email)));
+              }
             },
             child: Container(
               height: 85,

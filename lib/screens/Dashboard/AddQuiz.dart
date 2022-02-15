@@ -1,8 +1,11 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
+import 'package:super15/screens/Login/widgets/action_button.dart';
 import 'package:super15/screens/widgets/back_container.dart';
+import 'package:super15/values/UiColors.dart';
 import '../Login/widgets/inputComponent.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -14,10 +17,10 @@ class AddQuiz extends StatefulWidget {
 }
 
 class _AddQuizState extends State<AddQuiz> with TickerProviderStateMixin {
-  int quesNo = 0;
+  int quesNo = 1;
   var date = "null";
   DateTime _focusedDay = DateTime.now();
-  DateTime? _selectedDay;
+  DateTime? _selectedDay = DateTime.now();
   late AnimationController _animationController;
 
   @override
@@ -43,7 +46,7 @@ class _AddQuizState extends State<AddQuiz> with TickerProviderStateMixin {
           ),
           body: backContainer(
               child: Column(
-            children: [Expanded(child: _body())],
+            children: [Expanded(child: Container(width: 200, height: 200, color: ,))],
           )),
         ),
         date == "null"
@@ -61,7 +64,7 @@ class _AddQuizState extends State<AddQuiz> with TickerProviderStateMixin {
                                 child: Container(
                                     padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
                                     margin:
-                                        EdgeInsets.fromLTRB(20, 20.h, 20, 20.h),
+                                        EdgeInsets.fromLTRB(20, 20.h, 20, 18.h),
                                     width: 85.w,
                                     decoration: BoxDecoration(
                                         color: Colors.white,
@@ -137,11 +140,11 @@ class _AddQuizState extends State<AddQuiz> with TickerProviderStateMixin {
                                                         alignment:
                                                             Alignment.center,
                                                         decoration: BoxDecoration(
-                                                            color: Color(
-                                                                0xFF85c454),
+                                                            color: UiColors
+                                                                .primary,
                                                             border: Border.all(
-                                                                color: Color(
-                                                                    0xFF85c454)),
+                                                                color: UiColors
+                                                                    .primary),
                                                             borderRadius:
                                                                 BorderRadius
                                                                     .circular(
@@ -182,6 +185,19 @@ class _AddQuizState extends State<AddQuiz> with TickerProviderStateMixin {
                                                 lastDay: DateTime(2023, 03, 31),
                                                 focusedDay: _focusedDay,
                                               ),
+                                              SizedBox(
+                                                height: 20,
+                                              ),
+                                              actionButton(
+                                                  text: "Next",
+                                                  onClick: () {
+                                                    setState(() {
+                                                      date = DateFormat(
+                                                              "dd-MM-yy")
+                                                          .format(
+                                                              _selectedDay!);
+                                                    });
+                                                  })
                                             ]),
                                       ),
                                     )))))))
@@ -217,19 +233,49 @@ class _AddQuizState extends State<AddQuiz> with TickerProviderStateMixin {
   }
 
   Widget _body() {
-    return Container(child: PageView.builder(itemBuilder: (context, index) {
-      return Container(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [_input("Quiz", "text", half: true)],
-        ),
-      );
-    }));
+    return Container(
+        width: 100.w,
+        height: 100.h,
+        child: PageView.builder(itemBuilder: (context, index) {
+          return Container(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    _output("Quiz Date", date, half: true),
+                    Spacer(),
+                    _output("Question Number", quesNo.toString(), half: true),
+                  ],
+                ),
+                Container(
+                  margin: EdgeInsets.only(top: 40, bottom: 40),
+                  height: 120.sp,
+                  width: 89.w,
+                  padding: EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.black.withOpacity(0.3))),
+                  child: TextField(
+                    textCapitalization: TextCapitalization.sentences,
+                    controller: new TextEditingController(),
+                    decoration: new InputDecoration.collapsed(
+                        hintText: "Enter Question",
+                        hintStyle: TextStyle(color: Colors.black26)),
+                    keyboardType: TextInputType.multiline,
+                    maxLines: 8,
+                  ),
+                ),
+                _optionContainer()
+              ],
+            ),
+          );
+        }));
   }
 
-  Widget _input(title, text, {controller, half = false}) {
+  Widget _output(title, text, {controller, half = false}) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         SizedBox(
           height: 25,
@@ -242,8 +288,65 @@ class _AddQuizState extends State<AddQuiz> with TickerProviderStateMixin {
         SizedBox(
           height: 5,
         ),
-        inputComponent(text, controller: controller, half: half)
+        Center(
+          child: Text(text,
+              style: GoogleFonts.montserrat(
+                  fontWeight: FontWeight.w500, fontSize: 10.sp)),
+        )
       ],
     );
+  }
+
+  int _radioValue = 0;
+  int where = 0;
+
+  Widget _optionContainer() {
+    return GestureDetector(
+      onTap: () {
+        _handleRadioValueChange(0);
+      },
+      child: Container(
+        width: 90.w,
+        height: 60,
+        margin: EdgeInsets.only(top: 10),
+        padding: EdgeInsets.symmetric(horizontal: 10),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            color: Colors.transparent,
+            border: Border.all(color: UiColors.primary)),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Center(child: TextField()),
+            Spacer(),
+            new Radio(
+              value: 0,
+              groupValue: _radioValue,
+              onChanged: _handleRadioValueChange,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  _handleRadioValueChange(int? value) {
+    setState(() {
+      _radioValue = value!;
+
+      switch (_radioValue) {
+        case 0:
+          setState(() {
+            where = 0;
+          });
+          break;
+
+        case 1:
+          setState(() {
+            where = 1;
+          });
+          break;
+      }
+    });
   }
 }
